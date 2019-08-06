@@ -5,13 +5,13 @@ import { fetchEmail, getSiteType } from './helpers'
 function impression(event: PixelMessage) {
   switch (event.data.eventName) {
     case 'vtex:pageInfo':
-      return { event: 'viewHome' }
+      return event.data.eventType === "homeView" ? { event: 'viewHome' } : { event: event.data.eventType }
     case 'vtex:categoryView':
       return {
         event: 'viewList',
         item: event.data.products
-          .map(({ productId }: any) => productId)
-          .slice(0, 3),
+          .slice(0, 3)
+          .map(({ productId }: any) => productId),
       }
     case 'vtex:productView':
       const {
