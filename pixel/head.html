@@ -1,6 +1,6 @@
 <script>
-  (function(window, criteo_id) {
-    var criteo_id = "{{settings.criteo_id}}" || criteo_id;
+  (function(window) {
+    var criteo_id = "{{settings.criteo_id}}";
     if (criteo_id) {
       var a = document.createElement("script");
       a.type = "text/javascript";
@@ -10,5 +10,5 @@
       s.parentNode.insertBefore(a, s);
     }
     window.criteo_id = criteo_id;
-  })(window, window.criteo_id);
+  })(window);
 </script>
