@@ -1,0 +1,27 @@
+{
+  "name": "criteo",
+  "vendor": "vtex",
+  "version": "0.0.0",
+  "description": "criteo App",
+  "builders": {
+    "react": "3.x",
+    "store": "0.x",
+    "pixel": "0.x"
+  },
+  "credentialType": "absolute",
+  "settingsSchema": {
+    "title": "Criteo",
+    "type": "object",
+    "properties": {
+      "criteo_id": {
+        "title": "Criteo",
+        "description": "Enter Criteo ID",
+        "type": "string"
+      }
+    }
+  },
+  "dependencies": {
+    "vtex.pixel-interfaces": "1.x"
+  },
+  "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
+}
