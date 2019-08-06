@@ -18,7 +18,7 @@ function impression(event: PixelMessage) {
         data: {
           product: { productId: item },
         },
-      } = event.data.product.productId
+      } = event
       return { event: 'viewItem', item }
   }
 }
