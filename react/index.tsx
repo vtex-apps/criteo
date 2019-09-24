@@ -5,7 +5,9 @@ import { fetchEmail, getSiteType } from './helpers'
 function impression(event: PixelMessage) {
   switch (event.data.eventName) {
     case 'vtex:pageInfo':
-      return event.data.eventType === "homeView" ? { event: 'viewHome' } : { event: event.data.eventType }
+      return event.data.eventType === 'homeView'
+        ? { event: 'viewHome' }
+        : { event: event.data.eventType }
     case 'vtex:categoryView':
       return {
         event: 'viewList',
@@ -63,19 +65,14 @@ async function handleEvents(event: PixelMessage) {
     case 'vtex:pageInfo':
     case 'vtex:categoryView':
     case 'vtex:productView': {
-      impression(event)
-      break
+      return impression(event)
     }
     case 'vtex:orderPlaced': {
-      purchase(event)
-      break
+      return purchase(event)
     }
     case 'vtex:addToCart': {
-      cart(event)
-      break
+      return cart(event)
     }
-    default:
-      break
   }
 }
 
