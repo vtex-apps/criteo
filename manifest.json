@@ -1,7 +1,7 @@
 {
   "name": "criteo",
   "vendor": "vtex",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "criteo App",
   "builders": {
     "react": "3.x",
