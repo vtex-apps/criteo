@@ -2,100 +2,87 @@ import { canUseDOM } from 'vtex.render-runtime'
 import { PixelMessage } from './typings/events'
 import { fetchEmail, getSiteType } from './helpers'
 
-function impression(event: PixelMessage) {
+async function dispatchEvent(event: CriteoQ) {
+  const { criteo_q = [], criteo_id: account } = window
+  const setAccount: CriteoAccountEvent = { event: 'setAccount', account }
+  const setEmail: CriteoEmailEvent = {
+    event: 'setEmail',
+    email: [await fetchEmail()],
+  }
+  const setSiteType: CriteoSiteTypeEvent = {
+    event: 'setSiteType',
+    type: getSiteType(),
+  }
+  criteo_q.push(setAccount, setEmail, setSiteType, event)
+}
+
+function handleMessages(event: PixelMessage) {
+  const { criteo_q = [], criteo_id: account } = window
+  if (!account) return
+
   switch (event.data.eventName) {
-    case 'vtex:pageInfo':
-      return event.data.eventType === 'homeView'
-        ? { event: 'viewHome' }
-        : { event: event.data.eventType }
-    case 'vtex:categoryView':
-      return {
-        event: 'viewList',
-        item: event.data.products
-          .slice(0, 3)
-          .map(({ productId }: any) => productId),
+    case 'vtex:pageInfo': {
+      if (event.data.eventType === 'homeView') {
+        const setHomeView: CriteoViewHomeEvent = {
+          event: 'viewHome',
+          tms: 'gtm-vtex',
+        }
+        dispatchEvent(setHomeView)
       }
-    case 'vtex:productView':
+      break
+    }
+    case 'vtex:departmentView':
+    case 'vtex:internalSiteSearchView':
+    case 'vtex:categoryView': {
+      const {
+        data: { products },
+      } = event
+      const item: string[] = products
+        .slice(0, 3)
+        .map<string>(({ productId }) => productId)
+      const setViewList: CriteoViewListEvent = {
+        event: 'viewList',
+        tms: 'gtm-vtex',
+        item,
+      }
+      dispatchEvent(setViewList)
+      break
+    }
+    case 'vtex:productView': {
       const {
         data: {
-          product: { productId: item },
+          product: { productId },
         },
       } = event
-      return { event: 'viewItem', item }
-  }
-}
-
-function purchase(event: PixelMessage) {
-  const {
-    data: { transactionId: id, transactionProducts: products },
-  } = event
-
-  const item = products.map(({ id, price, quantity }: any) => ({
-    id,
-    price,
-    quantity,
-  }))
-
-  return {
-    event: 'trackTransaction',
-    id,
-    item,
-  }
-}
-
-function cart(event: PixelMessage) {
-  const {
-    data: { items },
-  } = event
-
-  const item = items.map(({ skuId: id, price, quantity }: any) => ({
-    id,
-    price,
-    quantity,
-  }))
-
-  return {
-    event: 'viewBasket',
-    item,
-  }
-}
-
-async function handleEvents(event: PixelMessage) {
-  switch (event.data.eventName) {
-    case 'vtex:pageInfo':
-    case 'vtex:categoryView':
-    case 'vtex:productView': {
-      return impression(event)
+      const setViewItem: CriteoViewItemEvent = {
+        event: 'viewItem',
+        tms: 'gtm-vtex',
+        item: productId,
+      }
+      dispatchEvent(setViewItem)
+      break
     }
     case 'vtex:orderPlaced': {
-      return purchase(event)
-    }
-    case 'vtex:addToCart': {
-      return cart(event)
-    }
-  }
-}
+      const {
+        data: { transactionId, transactionProducts },
+      } = event
 
-async function handleMessages(event: PixelMessage) {
-  const { criteo_q = [], criteo_id: account } = window
-  const type = getSiteType()
-  if (!account) return
-  switch (event.data.eventName) {
-    case 'vtex:pageInfo':
-    case 'vtex:categoryView':
-    case 'vtex:productView':
-    case 'vtex:orderPlaced':
-    case 'vtex:addToCart': {
-      const email = await fetchEmail()
-      if (email) {
-        const criteoEvent = await handleEvents(event)
-        criteo_q.push(
-          { event: 'setAccount', account },
-          { event: 'setSiteType', type },
-          { event: 'setEmail', email: [email] },
-          criteoEvent
-        )
+      const item: CriteoTrackTransactionItem[] = transactionProducts.map<
+        CriteoTrackTransactionItem
+      >(({ id, sellingPrice, quantity }) => ({
+        id,
+        price: sellingPrice,
+        quantity,
+      }))
+
+      const setTrackTransaction: CriteoTrackTransactionEvent = {
+        event: 'trackTransaction',
+        id: transactionId,
+        tms: 'gtm-vtex',
+        item,
       }
+
+      dispatchEvent(setTrackTransaction)
       break
     }
     default:
