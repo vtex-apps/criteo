@@ -1,4 +1,4 @@
 interface Window extends Window {
-    criteo_q:any
-    criteo_id: string
-  }
+  criteo_q: CriteoQ[]
+  criteo_id: string
+}
