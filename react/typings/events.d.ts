@@ -1,20 +1,40 @@
 export interface PixelMessage extends MessageEvent {
   data:
-  | PageInfo
-  | ProductViewData
-  | ProductClickData
-  | OrderPlacedData
-  | PageViewData
-  | ProductImpressionData
-  | AddToCartData
-  | RemoveToCartData
-  | CategoryViewData
-  | DepartmentViewData
+    | PageInfo
+    | ProductViewData
+    | ProductClickData
+    | OrderPlacedData
+    | PageViewData
+    | ProductImpressionData
+    | AddToCartData
+    | RemoveToCartData
+    | CategoryViewData
+    | DepartmentViewData
+    | InternalSiteSearchViewData
+}
+
+export interface InternalSiteSearchViewData extends EventData {
+  event: 'internalSiteSearchView'
+  eventName: 'vtex:internalSiteSearchView'
+  products: Product[]
+}
+
+export interface CategoryViewData extends EventData {
+  event: 'categoryView'
+  eventName: 'vtex:categoryView'
+  products: Product[]
+}
+
+export interface DepartmentViewData extends EventData {
+  event: 'departmentView'
+  eventName: 'vtex:departmentView'
+  products: Product[]
 }
 
 export interface PageInfo extends EventData {
-  event: "pageInfo"
-  eventName: "vtex:pageInfo"
+  event: 'pageInfo'
+  eventName: 'vtex:pageInfo'
+  eventType: string
 }
 
 export interface EventData {

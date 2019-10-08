@@ -1,14 +1,17 @@
+<script
+  type="text/javascript"
+  src="//static.criteo.net/js/ld/ld.js"
+  async="true"
+></script>
 <script>
   (function(window) {
     var criteo_id = "{{settings.criteo_id}}";
     if (criteo_id) {
-      var a = document.createElement("script");
-      a.type = "text/javascript";
-      a.async = true;
-      a.src = "//static.criteo.net/js/ld/ld.js";
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(a, s);
+      window.criteo_id = criteo_id;
+    } else {
+      console.error(
+        "Warning: No Criteo ID is defined. Please configure it in the apps admin."
+      );
     }
-    window.criteo_id = criteo_id;
   })(window);
 </script>

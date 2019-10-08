@@ -2,7 +2,7 @@
   "name": "criteo",
   "vendor": "vtex",
   "version": "0.0.3",
-  "description": "criteo App",
+  "description": "Criteo",
   "builders": {
     "react": "3.x",
     "store": "0.x",
@@ -14,8 +14,8 @@
     "type": "object",
     "properties": {
       "criteo_id": {
-        "title": "Criteo",
-        "description": "Enter Criteo ID",
+        "title": "Criteo ID",
+        "description": "Enter your Criteo ID",
         "type": "string"
       }
     }
